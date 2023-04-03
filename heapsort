@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+float *arr;   //array of floats for storing input values.
+int amt = 0;  //amount of numbers to be sorted.
+int ret = 0;  //mostly for debugging and holding unused return values.
+
+//function headers:
+int findparent(int amt);  //finds parent of passed value.
+int printarr();  //Function to print the array.
+void swap(int a, int b);  //swap function.
+void makemax(float *arr, int parent, int amt);
+void heapit(float *arr, int parent, int amt);
+void hsort(float *arr, int parent, int amt);
+
+int main(void) {
+  int parent = 0;
+  printf("What is the size of your array?:\n");
+  ret = scanf("%d", &amt);
+  arr = (float*)malloc (amt * sizeof(float));
+  printf("Please input your numbers followed by 'enter'\n");
+  for(int i = 0; i<amt; ++i) {
+    ret = scanf("%f", &arr[i]);
+  }
+  
+  printarr();
+  printf("This (above) is the array before it's a heap.\n\n");
+  parent = findparent(amt);
+  makemax(arr, parent, amt);
+  printarr();
+  printf("This (above) is the heap before it's sorted.\n\n");
+  hsort(arr, parent, amt);
+  printarr();
+  printf("This (above) is the heap after it's sorted.\n\n");
+  return 0;
+}
+
+void hsort(float *arr, int parent, int amt){
+  int first = 0;
+  int size = amt;  //starts equal to amt, but gets smaller
+  for(int i = amt-1; i>0; --i){
+    swap(first, i);  //swap root and last
+    --size;  //reduce size of heap by 1 (excludes sorted heap)
+    heapit(arr, 0, size); //re-create the heap
+  }//above 3 tasks wrapped in a for loop working toward root from last
+}
+
+void makemax(float *arr, int parent, int amt){
+  for(int i = amt/2; i>=0; --i){ 
+    heapit(arr, i, amt);
+  }
+}
+
+void heapit(float *arr, int parent, int amt){
+  int last = amt-1;
+  int largest  = 0;
+  int l = (parent*2)+1; //The left child of parent passed in.
+  int r = (parent*2)+2; //The right child of parent passed in.
+  
+  if(l<= last && arr[l]>arr[parent]){
+    largest = l;
+  }
+    else{
+      largest = parent;
+    }
+  
+  if(r<= last && arr[r]>arr[largest]){
+    largest = r;
+  }
+  
+  if(largest != parent){
+    swap(largest, parent);
+    heapit(arr, largest, amt);
+  }
+}
+
+int findparent(int amt){
+  int last = amt-1;
+  int parent = (last-1)/2;
+  return parent;
+  }
+
+int printarr(){
+    for(int i=0;i<amt; ++i){
+    printf("arr %d is %f\n", i, arr[i]);
+  } 
+}
+
+void swap(int a, int b) {
+  int temp = arr[a];
+  arr[a] = arr[b];
+  arr[b] = temp;
+}
